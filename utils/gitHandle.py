@@ -23,7 +23,7 @@ def cloneCode(username,pwd,gitUrl,gitProjectName,covTaskId):
     if not os.path.exists(codeDir):
         os.makedirs(codeDir)
         execCmd(f'''chmod 777 {codeDir}''')
-    Repo.clone_from(f'https://{username}:{pwd}@{gitUrl}', to_path=codeDir)
+    Repo.clone_from(f'http://{username}:{pwd}@{gitUrl}', to_path=codeDir)
 
 # 获取远程分支列表
 def getRemoteBranchList(gitProjectName, covTaskId):
