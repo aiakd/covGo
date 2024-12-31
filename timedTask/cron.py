@@ -196,7 +196,7 @@ def generateHtmlReport():
             # 代码路径
             gitCodePath = downloadPath(gitProjectName, covTaskId)
             # 全量覆盖率生成 todo
-            covToHtmlCmd = f'''cd {gitCodePath} && {settings.BASE_DIR}/cmdTools/gocov convert {covPath}/{mergeCovName}.cov | {settings.BASE_DIR}/cmdTools/gocov-html > {covPath}/full_{mergeCovName}.html'''
+            covToHtmlCmd = f'''cd {gitCodePath} && export GOPATH=$GOPATH:{gitCodePath} && {settings.BASE_DIR}/cmdTools/gocov convert {covPath}/{mergeCovName}.cov | {settings.BASE_DIR}/cmdTools/gocov-html > {covPath}/full_{mergeCovName}.html'''
             MyLog.info(f'covToHtmlCmd:{covToHtmlCmd}')
             execCmd(covToHtmlCmd)
             m = reportsModel(runId=runId,
@@ -210,7 +210,7 @@ def generateHtmlReport():
             # 把cov转换成xml
             # covToXmlCmd = f'''cd {covPath} && gocov convert {covPath}/{mergeCovName}.cov | gocov-xml > {covPath}/{mergeCovName}.xml'''
 
-            covToXmlCmd = f'''cd {gitCodePath} && {settings.BASE_DIR}/cmdTools/gocov convert {covPath}/{mergeCovName}.cov | {settings.BASE_DIR}/cmdTools/gocov-xml > {covPath}/{mergeCovName}.xml'''
+            covToXmlCmd = f'''cd {gitCodePath} && export GOPATH=$GOPATH:{gitCodePath} && {settings.BASE_DIR}/cmdTools/gocov convert {covPath}/{mergeCovName}.cov | {settings.BASE_DIR}/cmdTools/gocov-xml > {covPath}/{mergeCovName}.xml'''
             MyLog.info(f'covToXmlCmd:{covToXmlCmd}')
             execCmd(covToXmlCmd)
 
