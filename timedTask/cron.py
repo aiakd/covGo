@@ -10,8 +10,6 @@ from cov.models import reports as reportsModel
 from utils.logs import MyLog
 from django.db import connection
 from utils.covUtils import *
-import re
-
 
 # 初次创建覆盖率任务后，任务状态=0，需要对0状态的进行clone代码到指定的任务目录
 # todo 这个任务期望每1分钟检查一次
@@ -102,16 +100,13 @@ def getCov():
                 covPath = covReportsPath(gitProjectName, covTaskId)
                 runId = generateRunId(t, covTaskId, None)
                 covFileName = generateRunId(t, covTaskId, originalHostPort=clientServer)
-                patternHostPort = re.compile(r'''\/\/(.*)''')
-                hostPort = re.findall(patternHostPort, str(clientServer))[0]
-
                 print(covPath)
                 print(runId)
                 # 拉取正常的入库status=1
                 try:
                     # getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile --center={clientServer} -o {covPath}/{covFileName}.cov'''
-                    # V2 getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile get --host={clientServer} -o {covPath}/{covFileName}.cov'''
-                    getCovcmd = f'''goc profile get --host={hostPort} -o {covPath}/{covFileName}.cov'''
+                    # V2 getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile get --host={hostServer} -o {covPath}/{covFileName}.cov'''
+                    getCovcmd = f'''goc profile get --host=172.18.100.230:7777 -o {covPath}/{covFileName}.cov'''
                     MyLog.info(f'getCovcmd:{getCovcmd}')
                     execCmd(getCovcmd)
                     p = covTaskHistoryModel(runId=runId,
