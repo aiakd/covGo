@@ -106,7 +106,8 @@ def getCov():
                 # 拉取正常的入库status=1
                 try:
                     # getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile --center={clientServer} -o {covPath}/{covFileName}.cov'''
-                    getCovcmd = f'''goc profile --center={clientServer} -o {covPath}/{covFileName}.cov'''
+                    # V2 getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile get --host={clientServer} -o {covPath}/{covFileName}.cov'''
+                    getCovcmd = f'''goc profile get --host={clientServer} -o {covPath}/{covFileName}.cov'''
                     MyLog.info(f'getCovcmd:{getCovcmd}')
                     execCmd(getCovcmd)
                     p = covTaskHistoryModel(runId=runId,
