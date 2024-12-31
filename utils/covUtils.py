@@ -22,6 +22,8 @@ def getClientServerList():
 def covReportsPath(gitProjectName, covTaskId):
     covReportsPath = os.path.join(settings.BASE_DIR, '..', 'covFilesDir', 'covReports', str(gitProjectName).strip(),
                                   str(covTaskId).strip())
+    if not os.path.exists(covReportsPath):
+        os.makedirs(covReportsPath)
     execCmd(f'''chmod 777 {covReportsPath}''')
     return covReportsPath
 
