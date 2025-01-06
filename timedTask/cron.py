@@ -106,7 +106,7 @@ def getCov():
                 try:
                     # getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile --center={clientServer} -o {covPath}/{covFileName}.cov'''
                     # V2 getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile get --host={hostServer} -o {covPath}/{covFileName}.cov'''
-                    getCovcmd = f'''goc profile get --host=172.18.100.230:7777 -o {covPath}/{covFileName}.cov'''
+                    getCovcmd = f'''goc profile get --host=172.18.100.230:7777 --id={clientServer} -o {covPath}/{covFileName}.cov'''
                     MyLog.info(f'getCovcmd:{getCovcmd}')
                     execCmd(getCovcmd)
                     p = covTaskHistoryModel(runId=runId,

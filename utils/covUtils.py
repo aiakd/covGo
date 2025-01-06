@@ -32,12 +32,17 @@ def covReportsPath(gitProjectName, covTaskId):
 def generateRunId(t, covTaskId, originalHostPort):
     patternHostPort = re.compile(r'''\/\/(.*)''')
     if originalHostPort:
-        hostPort = re.findall(patternHostPort, str(originalHostPort))[0]
-        hostPort = hostPort.replace(':', '_')
-        res = f'''{t}-{covTaskId}-{hostPort}'''
+        if "http" in originalHostPort:
+            hostPort = re.findall(patternHostPort, str(originalHostPort))[0]
+            hostPort = hostPort.replace(':', '_')
+            res = f'''{t}-{covTaskId}-{hostPort}'''
+        else :
+            hostPort = originalHostPort
+            res = f'''{t}-{covTaskId}-{hostPort}'''
     else:
         res = f'''{t}-{covTaskId}'''
     return res
+
 
 
 # hostPort = 'http://192.168.56.101:46599'
