@@ -98,8 +98,14 @@ def getCov():
             t = datetime.now().strftime('%Y%m%d%H%M%S%f')
             cmd_goc =['goc', 'service', 'get', '--host={0}'.format(gocServer), '--wide']
             server_id_str = runCommand(cmd_goc)
+            MyLog.info(f'server_id_str:{server_id_str}')
+
             server_id_list = getGocServieslist(server_id_str)
+            MyLog.info(f'server_id_list:{server_id_list}')
+
             connect_server_list = [server for server in server_id_list if server['STATUS'] == 'CONNECT' and gitProjectName in server['CMD']]
+            MyLog.info(f'connect_server_list:{connect_server_list}')
+
             for id in connect_server_list:
                 covPath = covReportsPath(gitProjectName, covTaskId)
                 runId = generateRunId(t, covTaskId, None)

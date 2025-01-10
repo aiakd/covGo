@@ -25,6 +25,8 @@ def runCommand(command, timeout=30):
             command, capture_output=True, text=True, timeout=timeout, check=True
         )
         # 如果命令执行成功，返回标准输出
+        MyLog.info(f"ExecCmd end: {result.stdout}")
+
         return result.stdout
     except subprocess.CalledProcessError as e:
         # 捕获命令执行错误并输出错误信息
