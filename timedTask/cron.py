@@ -103,7 +103,7 @@ def getCov():
             server_id_list = getGocServieslist(server_id_str)
             MyLog.info(f'server_id_list:{server_id_list}')
 
-            connect_server_list = [server for server in server_id_list if server['STATUS'] == 'CONNECT' and gitProjectName in server['CMD']]
+            connect_server_list = [server for server in server_id_list if server['STATUS'] == 'CONNECT' and gitProjectName in server['HOSTNAME']]
             MyLog.info(f'connect_server_list:{connect_server_list}')
 
             for id in connect_server_list:
