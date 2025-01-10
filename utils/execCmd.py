@@ -19,6 +19,8 @@ def execCmd(cmd):
 def runCommand(command, timeout=30):
     try:
         # 执行命令并获取输出
+        MyLog.info(f"ExecCmd end: {command}")
+
         result = subprocess.run(
             command, capture_output=True, text=True, timeout=timeout, check=True
         )
