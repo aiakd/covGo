@@ -1,6 +1,6 @@
 import time
 from django.conf import settings
-from utils.execCmd import execCmd
+from utils.execCmd import execCmd,runCommand
 from utils.fileHandle import getXmlFileName
 from utils.gitHandle import cloneCode, pullCode, checkOutBranch, downloadPath
 from cov.models import project as projectModel
@@ -93,25 +93,27 @@ def getCov():
             # 切换分支
             checkOutBranch(gitProjectName, covTaskId, branch)
             # 获取被测机器列表 todo 与填写的进行对比
-            clientServerList = eval(clientServerHostPort)
+            gocServer = eval(clientServerHostPort)[0]
             # 拉取覆盖率
             t = datetime.now().strftime('%Y%m%d%H%M%S%f')
-            for clientServer in clientServerList:
+            cmd_goc =['goc', 'service', 'get', '--host={0}'.format(gocServer), '--wide']
+            server_id_str = runCommand(cmd_goc)
+            server_id_list = getGocServieslist(server_id_str)
+            connect_server_list = [server for server in server_id_list if server['STATUS'] == 'CONNECT' and gitProjectName in server['CMD']]
+            for id in connect_server_list:
                 covPath = covReportsPath(gitProjectName, covTaskId)
                 runId = generateRunId(t, covTaskId, None)
-                covFileName = generateRunId(t, covTaskId, originalHostPort=clientServer)
-                print(covPath)
-                print(runId)
+                covFileName = generateRunId(t, covTaskId, originalHostPort=id)
                 # 拉取正常的入库status=1
                 try:
                     # getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile --center={clientServer} -o {covPath}/{covFileName}.cov'''
                     # V2 getCovcmd = f'''{settings.BASE_DIR}/cmdTools/goc profile get --host={hostServer} -o {covPath}/{covFileName}.cov'''
-                    getCovcmd = f'''goc profile get --host=172.18.100.230:7777 --id={clientServer} --skip='.pb.' -o {covPath}/{covFileName}.cov'''
+                    getCovcmd = f'''goc profile get --host={gocServer} --id={id} --skip='.pb.' -o {covPath}/{covFileName}.cov'''
                     MyLog.info(f'getCovcmd:{getCovcmd}')
                     execCmd(getCovcmd)
                     p = covTaskHistoryModel(runId=runId,
                                             covTaskId=covTaskId,
-                                            clientServerHostPort=clientServer,
+                                            clientServerHostPort=id,
                                             covFileName=covFileName + ".cov",
                                             status=3,
                                             )
@@ -121,17 +123,17 @@ def getCov():
                         lastCollectTime=time.strftime("%Y-%m-%d %H:%M:%S"),
                         updateTime=time.strftime("%Y-%m-%d %H:%M:%S")
                     )
-                    MyLog.info(f"收集覆盖率完毕--覆盖率任务名称:{covTaskName}--服务器:{clientServer}")
+                    MyLog.info(f"收集覆盖率完毕--覆盖率任务名称:{covTaskName}--服务器:{id}")
                 # 拉取非正常的入库status=2
                 except Exception as e:
                     p = covTaskHistoryModel(runId=runId,
                                             covTaskId=covTaskId,
-                                            clientServerHostPort=clientServer,
+                                            clientServerHostPort=id,
                                             covFileName=runId + ".cov",
                                             status=2,
                                             )
                     p.save()
-                    MyLog.info(f"收集覆盖率异常--覆盖率任务名称:{covTaskName}--服务器:{clientServer}，报错如下: {str(e)}")
+                    MyLog.info(f"收集覆盖率异常--覆盖率任务名称:{covTaskName}--服务器:{id}，报错如下: {str(e)}")
 
         except Exception as e:
             MyLog.error(f"获取覆盖率cov文件异常--覆盖率任务名称:{covTaskName}--仓库地址:{gitUrl}，报错如下: {str(e)}")

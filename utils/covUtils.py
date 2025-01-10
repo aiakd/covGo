@@ -91,3 +91,14 @@ def crawlCovFromHtml(htmlPath):
 # res = crawlCovFromHtml(path)
 # print(res['diffLineTotal'])
 # print(type(res))
+def getGocServieslist(gocstr:str):
+    gocstr = gocstr.split('\n')
+    headers= gocstr[7].split()[:6]
+    headers[0]="ID"
+    data_lines=gocstr[8:]
+    result=[]
+    for line in data_lines:
+        if len(line)>72:
+            parts = line[:72].split() + [" ".join(line[72:].split())]
+            result.append(dict(zip(headers, parts)))
+    return result
