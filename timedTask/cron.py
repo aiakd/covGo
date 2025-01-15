@@ -39,9 +39,13 @@ def cloneToTaskDir():
         gitProjectName = res[6]
         covTaskId = res[0]
         covTaskName = res[5]
+        gitCodePath = downloadPath(gitProjectName, covTaskId)
+
         MyLog.info(f"首次下载--start git clone--覆盖率任务名称:{covTaskName}--仓库地址:{gitUrl}")
         try:
             cloneCode(username, pwd, gitUrl, gitProjectName, covTaskId)
+            checkout_remote_branch_cmd = f'''cd {gitCodePath} && git checkout -b master origin/master'''
+            execCmd(checkout_remote_branch_cmd)
             MyLog.info(f"首次下载完毕--end git clone--覆盖率任务名称:{covTaskName}--仓库地址:{gitUrl}")
             covTaskModel.objects.filter(id=covTaskId).update(status=1,
                                                              updateTime=time.strftime("%Y-%m-%d %H:%M:%S")
@@ -89,9 +93,13 @@ def getCov():
         MyLog.info(f"开始搜集覆盖率--覆盖率任务名称:{covTaskName}--clientServerList:{clientServerHostPort}")
         try:
             # 拉取代码
+            checkOutBranch(gitProjectName, covTaskId, branch="master")
+
             pullCode(gitProjectName, covTaskId)
             # 切换分支
             checkOutBranch(gitProjectName, covTaskId, branch)
+            pullCode(gitProjectName, covTaskId)
+
             # 获取被测机器列表 todo 与填写的进行对比
             gocServer = eval(clientServerHostPort)[0]
             # 拉取覆盖率
