@@ -235,7 +235,7 @@ def generateHtmlReport():
             # 判断生成的xml大小是否为0,为0则不进行下一步转换
             if os.stat(f'{covPath}/{mergeCovName}.xml').st_size != 0:
                 # xml转换成后html文件
-                xmlToHtmlCmd = f'''cd {gitCodePath} && diff-cover {covPath}/{mergeCovName}.xml --compare-branch={compareBranch}--html-report {covPath}/{mergeCovName}.html'''
+                xmlToHtmlCmd = f'''cd {gitCodePath} && diff-cover {covPath}/{mergeCovName}.xml --compare-branch={compareBranch} --html-report {covPath}/{mergeCovName}.html'''
                 MyLog.info(f'xmlToHtmlCmd:{xmlToHtmlCmd}')
                 execCmd(xmlToHtmlCmd)
                 MyLog.info(f"生成html完毕--覆盖率任务名称:{covTaskName}--生成文件：{mergeCovName}.html")
