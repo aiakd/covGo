@@ -169,7 +169,8 @@ def generateHtmlReport():
                                 gitPwd,
                                 compareBranch,
                                 covTaskName,
-                                p.projectName 
+                                p.projectName,
+                                branch 
                                 FROM cov_covtask c
                                     LEFT JOIN cov_project p ON  c.projectId = p.id
                                     WHERE c.deleted = 0 AND c.status IN (31) AND p.deleted = 0  AND c.startTime <= NOW() AND NOW() <= c.endTime
@@ -183,6 +184,7 @@ def generateHtmlReport():
         covTaskName = res[6]
         gitProjectName = res[7]
         covTaskId = res[0]
+        branch = res[8]
         covPath = covReportsPath(gitProjectName, covTaskId)
         t = datetime.now().strftime('%Y%m%d%H%M%S%f')
         runId = generateRunId(t, covTaskId, None)
@@ -233,7 +235,7 @@ def generateHtmlReport():
             # 判断生成的xml大小是否为0,为0则不进行下一步转换
             if os.stat(f'{covPath}/{mergeCovName}.xml').st_size != 0:
                 # xml转换成后html文件
-                xmlToHtmlCmd = f'''cd {gitCodePath} && diff-cover {covPath}/{mergeCovName}.xml --compare-branch={compareBranch} --html-report {covPath}/{mergeCovName}.html'''
+                xmlToHtmlCmd = f'''cd {gitCodePath} && diff-cover {covPath}/{mergeCovName}.xml --compare-branch={compareBranch}..{branch} --html-report {covPath}/{mergeCovName}.html'''
                 MyLog.info(f'xmlToHtmlCmd:{xmlToHtmlCmd}')
                 execCmd(xmlToHtmlCmd)
                 MyLog.info(f"生成html完毕--覆盖率任务名称:{covTaskName}--生成文件：{mergeCovName}.html")
